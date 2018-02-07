@@ -7,6 +7,9 @@ output: html_document
  
 #####Swallow Breeding Performance & Phenology in the Maritimes  
 
+**Background**
+Aerial insectivore populations, including Tree (Tachycineta bicolor) and Barn (Hirundo rustica) Swallows, have experienced precipitous declines since the 1970s in North America. There are indications that a concurrent decline in insects, coupled with earlier spring emergence driven by climate change, may be occurring. Such a change in insects would likely alter the breeding phenology and performance of swallows and may be linked to species-wide population declines. In the absence of insect abundance data, winter weather data, which influences insect abundance, can instead be used to examine relationships between food availability, and swallow breeding phenology and performance.
+
 **Biological Questions:**   
 Q1 - Has swallow breeding phenology (clutch initiation date) changed from 1962-2016?  
 Q2 - Has swallow breeding performance (chick survival) changed from 1962-2016?   
