@@ -17,14 +17,14 @@ problems(swallows.df)
 
 ##### STEP 2: TIDY DATA
 
-# drop unnecessary columns: 
+# drop unnecessary columns to simplify data frame: 
 swallows.df.2 <- select(swallows.df, Species, NestID, Province, Site, Latitude, Longitude, Year, CID, HD, CS, BS, SD12, minFt, minJFt, medJFt, medJp, meanMAp)
 
 # create 3 time bins: 1) 1960-1972, 2) 1973-2005, 3) 2006-2016 
 swallows.df.3 <- swallows.df.2 %>% mutate(Yr = cut(Year, breaks = c(1959, 1972, 2005, 2016), labels = c("1960-1972", "1973-2005", "2006-2016")))
 summary(swallows.df.3)     # make sure data look ok
 str(swallows.df.3)         # have 1 outlier
-View(swallows.df.3)
+View(swallows.df.3)        
 
 # change SD12 variable (# of chicks that survived to day 12, count data) to the % of the clutch that survived, to get survival rate
 swallows.df.4 <- swallows.df.3 %>% mutate(Surv.Rate = SD12 / CS)
