@@ -8,14 +8,24 @@ output: html_document
 #####Swallow Breeding Performance & Phenology in the Maritimes  
 
 **Background**
-Aerial insectivore populations, including Tree (Tachycineta bicolor) and Barn (Hirundo rustica) Swallows, have experienced precipitous declines since the 1970s in North America. There are indications that a concurrent decline in insects, coupled with earlier spring emergence driven by climate change, may be occurring. Such a change in insects would likely alter the breeding phenology and performance of swallows and may be linked to species-wide population declines. In the absence of insect abundance data, winter weather data, which influences insect abundance, can instead be used to examine relationships between food availability, and swallow breeding phenology and performance.
+Aerial insectivore populations, including Tree (Tachycineta bicolor) and Barn (Hirundo rustica) Swallows, have experienced precipitous declines since the 1970s in North America. There are indications that there may be a concurrent decline in insect populations, coupled with earlier spring emergence driven by climate change. Such a decline in insect populations would likely alter the breeding phenology and performance of swallows, and may be linked to species-wide population declines. In the absence of insect abundance data, weather data - which influences insect abundance - can instead be used to examine relationships between food availability, and swallow breeding phenology and performance.
 
 **Biological Questions:**   
-Q1 - Has swallow breeding phenology (clutch initiation date) changed from 1962-2016?  
-Q2 - Has swallow breeding performance (chick survival) changed from 1962-2016?   
-Q3 - Is breeding phenology affected by climate?   
-Q4 - Is breeding performance affected by climate?  
+Q1 - Has swallow breeding phenology (clutch initiation date) changed from 1962-2016?    
+Hypothesis: both spp. will have advanced CID over time  
+Rationale: insects are likely emerging earlier due to advanced spring thaw-up, and swallows have adjusted their phenology in response  
 
+Q2 - Has swallow breeding performance (chick survival) changed from 1962-2016? 
+Hypothesis: chick survival has decreased over time, contributing to the overall population declines in both spp.  
+Rationale: decreased chick survial (one measure of breeding performance) would be an obvious explanation as to why populations have broadly declined. If chick survial has not changed, it suggests declines may be occuring at other points of the annual cycle (ex. high mortality during migration or overwintering)   
+NOTE: could also examine other measures of breeding performance such as clutch size and brood size  
+
+Q3 - Is breeding phenology affected by climate?   
+Hypothesis: rainfall and temperature variables will explain the most variation in clutch initiation date    Rationale: rainfall and temperature are both positively associated with insect abundance, and likely emergence    
+
+Q4 - Is breeding performance affected by climate?    
+Hypothesis: chick survival has been negatively affected by changes in climate  
+Rationale: if swallow breeding performance has declined over time, the most obvious explanation is a decrease in insect populations driven by climate change
   
 **STEP 1: IMPORT PACKAGES & DATA**  
 
@@ -60,8 +70,8 @@ str(swallows.df.5)
 
 Make a tibble for each species so they can be examined separately:
 ```{r}
-TRES.df <- filter(swallows.df.3, Species == "TRES")  # tree swallows
-BARS.df <- filter(swallows.df.3, Species == "BARS")  # barn swallows
+TRES.df <- filter(swallows.df.5, Species == "TRES")  # tree swallows
+BARS.df <- filter(swallows.df.5, Species == "BARS")  # barn swallows
 ```
    
 **STEP 3: VISUALIZE DATA for each biological question**

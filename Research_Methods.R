@@ -1,9 +1,25 @@
 # Swallow Breeding Performance & Phenology in the Maritimes
 
-# Q1 - Has swallow breeding phenology (clutch initiation date) changed from 1962-2016? 
+# Q1 - Has swallow breeding phenology (clutch initiation date, CID) changed from 1962-2016? 
+# Hypothesis: both spp. will have advanced CID over time
+# Rationale: insects are likely emerging earlier due to advanced spring thaw-up, and swallows have adjusted their phenology in response
+
 # Q2 - Has swallow breeding performance (chick survival) changed from 1962-2016? 
-# Q3 - Is breeding phenology affected by climate? 
-# Q4 - Is breeding performance affected by climate?
+# Hypothesis: chick survival has decreased over time, contributing to the overall population declines in both spp.
+# Rationale: decreased chick survial (one measure of breeding performance) would be an obvious explanation as to why 
+# populations have broadly declined. If chick survial has not changed, it suggests declines may be occuring at other
+# points of the annual cycle (ex. high mortality during migration or overwintering) 
+# NOTE: could also examine other measures of breeding performance such as clutch size and brood size
+
+# Q3 - Is breeding phenology (clutch initiation date) affected by climate? 
+# Hypothesis: rainfall and temperature variables will explain the most variation in clutch initiation date
+# Rationale: rainfall and temperature are both positively associated with insect abundance, and likely emergence
+
+# Q4 - Is breeding performance (chick survival) affected by climate?
+# Hypothesis: chick survival has been negatively affected by changes in climate
+# Rationale: ???
+
+
 
 
 ##### STEP 1: IMPORT PACKAGES & DATA
@@ -37,8 +53,8 @@ swallows.df.5 <- filter(swallows.df.4, CID < 95)
 summary(swallows.df.5)     # make sure data look ok
 
 # make a tibble for each species so they can be examined seperately:
-TRES.df <- filter(swallows.df.3, Species == "TRES")  # tree swallows
-BARS.df <- filter(swallows.df.3, Species == "BARS")  # barn swallows
+TRES.df <- filter(swallows.df.5, Species == "TRES")  # tree swallows
+BARS.df <- filter(swallows.df.5, Species == "BARS")  # barn swallows
 
 
 ##### STEP 3: VISUALIZE DATA for each biological question
@@ -76,9 +92,22 @@ ggplot(swallows.df.5, aes(Yr, CID)) +
         
 #boxplot + scatterplot, see if mean is changing over time
 # boxplot and scatterplot both difficult to interpret by themselves, more informative when combined
-ggplot(swallows.df.5, aes(Yr, Surv.Rate)) + 
+ggplot(swallows.df.5, aes(Yr, Surv.Rate)) +   
   stat_boxplot(geom="errorbar") + 
   geom_boxplot(outlier.shape=1) + 
   xlab("Period") + ylab("Survival") + 
-  facet_grid(. ~ Species)  +   
-  geom_jitter()
+  facet_grid(. ~ Species)  +
+  geom_jitter() + geom_point(alpha=0.3)
+
+
+
+
+### use summarise() and group_by() to get counts of Surv.Rate, add to last to plot ?
+  geom_point(aes(size = count), alpha = 0.3) 
+  
+  
+
+
+
+
+
