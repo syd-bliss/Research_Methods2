@@ -172,8 +172,3 @@ ggplot(swallows.df, aes(meanMAp, CID)) +
   ylab("Clutch initiation date (May 1 = day 1)") + 
   facet_grid(. ~ Species)
 
-
-
-
-
-
