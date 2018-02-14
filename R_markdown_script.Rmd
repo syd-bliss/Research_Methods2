@@ -42,7 +42,7 @@ problems(swallows.df)
 ```
 **STEP 2: TIDY THE DATA**   
 
-Drop unnecessary columns using select():
+Drop unnecessary columns using select(): 
 ```{r}
 swallows.df <- select(swallows.df, Species, NestID, Province, Site, Latitude, Longitude, Year, CID, HD, CS, BS, SD12, minFt, minJFt, medJFt, medJp, meanMAp)
 ```
