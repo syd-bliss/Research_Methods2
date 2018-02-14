@@ -44,41 +44,41 @@ problems(swallows.df)
 
 Drop unnecessary columns using select():
 ```{r}
-swallows.df.2 <- select(swallows.df, Species, NestID, Province, Site, Latitude, Longitude, Year, CID, HD, CS, BS, SD12, minFt, minJFt, medJFt, medJp, meanMAp)
+swallows.df <- select(swallows.df, Species, NestID, Province, Site, Latitude, Longitude, Year, CID, HD, CS, BS, SD12, minFt, minJFt, medJFt, medJp, meanMAp)
 ```
 
 Create three time bins, (1) 1960-1972, (2) 1973-2005, (3) 2006-2016 to aid interpretation of changes over time, using mutate():
 ```{r}
-swallows.df.3 <- swallows.df.2 %>% mutate(Yr = cut(Year, breaks = c(1959, 1972, 2005, 2016), labels =  c("1960-1972", "1973-2005", "2006-2016")))
+swallows.df <- swallows.df %>% mutate(Yr = cut(Year, breaks = c(1959, 1972, 2005, 2016), labels =  c("1960-1972", "1973-2005", "2006-2016")))
 ```
 
 Create survival rate (Surv.Rate) by dividing the SD12 variable (# of chicks that survived to day 12) by clutch size (CS), using mutate():
 ```{r}
-swallows.df.4 <- swallows.df.3 %>% mutate(Surv.Rate = SD12 / CS)
+swallows.df <- swallows.df %>% mutate(Surv.Rate = SD12 / CS)
 ```
 
 There’s an outlier in a Tree Swallow CID record (value = 96, or Aug 4) which is biologically unlikely. Probably due to a recording error. Drop outlier:
 ```{r}
-swallows.df.5 <- filter(swallows.df.4, CID < 96) 
+swallows.df <- filter(swallows.df, CID < 96) 
 ```
 
 Make sure the data look ok after all these changes:
 ```{r}
-summary(swallows.df.5)
-str(swallows.df.5)
+summary(swallows.df)
+str(swallows.df)
 ```
 
 Make a tibble for each species so they can be examined separately:
 ```{r}
-TRES.df <- filter(swallows.df.5, Species == "TRES")  # tree swallows
-BARS.df <- filter(swallows.df.5, Species == "BARS")  # barn swallows
+TRES.df <- filter(swallows.df, Species == "TRES")  # tree swallows
+BARS.df <- filter(swallows.df, Species == "BARS")  # barn swallows
 ```
    
 **STEP 3: VISUALIZE DATA for each biological question**
 
 Histogram to see how many records exist for each species. Result looks unbalanced, which is likely due to varying volunteer effort. Far more Tree Swallows were sampled than Barn Swallows, and most data were collected after 2010 in both species.
 ```{r}
-ggplot(swallows.df.5, aes(x = Year)) + 
+ggplot(swallows.df, aes(x = Year)) + 
   geom_histogram(bins = 60) + 
   facet_grid(. ~ Species) + 
   xlab("Year") + 
@@ -90,7 +90,7 @@ ggplot(swallows.df.5, aes(x = Year)) +
 
 Scatterplot to see spread of the data. Looks like Barn Swallows start laying eggs later in the spring and continue later into the summer than Tree Swallows, likely because Barn Swallows are double-brooded. Tree Swallows start laying earlier and have a more restricted laying range.
 ```{r}
-ggplot(swallows.df.5, aes(Year, CID)) + 
+ggplot(swallows.df, aes(Year, CID)) + 
   geom_point() + 
   geom_jitter() +
   xlab("Year") + 
@@ -100,7 +100,7 @@ ggplot(swallows.df.5, aes(Year, CID)) +
 
 Boxplot to see the same data another way. Looks like the both species are initiating clutches earlier in the 2006-16 period than they were in the 1960-72 period.
 ```{r}
-ggplot(swallows.df.5, aes(Yr, CID)) + 
+ggplot(swallows.df, aes(Yr, CID)) + 
   stat_boxplot(geom="errorbar") + 
   geom_boxplot(outlier.shape=1) + 
   xlab("Period") + ylab("Clutch initiation date (May 1 = day 1)") + 
@@ -111,13 +111,24 @@ ggplot(swallows.df.5, aes(Yr, CID)) +
 
 The boxplot and scatterplot are difficult to interpret alone and more informative when combined. It looks like survival is fairly consistent over time. Perhaps it has decreased slightly in Barn Swallows.
 ```{r chunk_name, warning=FALSE}
-ggplot(swallows.df.5, aes(Yr, Surv.Rate)) + 
+ggplot(swallows.df, aes(Yr, Surv.Rate)) + 
   stat_boxplot(geom="errorbar") + 
   geom_boxplot(outlier.shape=1) + 
   xlab("Period") + ylab("Survival") + 
   facet_grid(. ~ Species)  +   
   geom_jitter()
 ```
+Try with alpha:
+
+```{r}
+ggplot(swallows.df, aes(Yr, Surv.Rate)) +   
+  stat_boxplot(geom="errorbar") + 
+  geom_boxplot(outlier.shape=1) + 
+  xlab("Period") + ylab("Survival") + 
+  facet_grid(. ~ Species)  +
+  geom_point(alpha=0.3)
+```
+
 
 **Q3 - Breeding phenology and climate variables. Is there a relationship between clutch initiation date (CID) and various measures on climate?**
 
@@ -126,7 +137,7 @@ Note the BARS clutches are not seperated here, limiting the interpretation for t
 Climate variable #1 - minimum February temperature (minFt). Looks like minFt has a strong negative relationship with CID:
 
 ```{r}
-ggplot(swallows.df.5, aes(minFt, CID)) + 
+ggplot(swallows.df, aes(minFt, CID)) + 
     geom_smooth(mapping = aes(x = minFt, y = CID)) + 
     xlab("Minimum February temperature (C)") + 
     ylab("Clutch initiation date (May 1 = day 1)") + 
@@ -136,7 +147,7 @@ ggplot(swallows.df.5, aes(minFt, CID)) +
 Climate variable #2 - minimum January-February temperature (minJFt). Looks like minJFt has a negative relationship with CID in TRES, but not in BARS:
 
 ```{r}
-  ggplot(swallows.df.5, aes(minJFt, CID)) + 
+  ggplot(swallows.df, aes(minJFt, CID)) + 
     geom_smooth(mapping = aes(x = minJFt, y = CID)) + 
     xlab("Minimum Jan-Feb temperature (C)") + 
     ylab("Clutch initiation date (May 1 = day 1)") + 
@@ -145,7 +156,7 @@ Climate variable #2 - minimum January-February temperature (minJFt). Looks like 
 
 Climate variable #3 - median January-February temperature (medJFt). No consistent relationship in either species:
 ```{r}
-ggplot(swallows.df.5, aes(medJFt, CID)) + 
+ggplot(swallows.df, aes(medJFt, CID)) + 
   geom_smooth(mapping = aes(x = medJFt, y = CID)) + 
   xlab("Median Jan-Feb temperature (C)") + 
   ylab("Clutch initiation date (May 1 = day 1)") + 
@@ -155,7 +166,7 @@ ggplot(swallows.df.5, aes(medJFt, CID)) +
 Climate variable #4 - mean annual precipitation (meanMAp). Clutch initiation date is  earliest with meanMAp is lowest and almost highest. Does this make sense?
 
 ```{r}
-ggplot(swallows.df.5, aes(meanMAp, CID)) + 
+ggplot(swallows.df, aes(meanMAp, CID)) + 
   geom_smooth(mapping = aes(x = meanMAp, y = CID)) + 
   xlab("Mean monthly precipitation (cm)") + 
   ylab("Clutch initiation date (May 1 = day 1)") + 
