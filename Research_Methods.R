@@ -34,33 +34,33 @@ problems(swallows.df)
 ##### STEP 2: TIDY DATA
 
 # drop unnecessary columns to simplify data frame: 
-swallows.df.2 <- select(swallows.df, Species, NestID, Province, Site, Latitude, Longitude, Year, CID, HD, CS, BS, SD12, minFt, minJFt, medJFt, medJp, meanMAp)
+swallows.df <- select(swallows.df, Species, NestID, Province, Site, Latitude, Longitude, Year, CID, HD, CS, BS, SD12, minFt, minJFt, medJFt, medJp, meanMAp)
 
 # create 3 time bins: 1) 1960-1972, 2) 1973-2005, 3) 2006-2016 
-swallows.df.3 <- swallows.df.2 %>% mutate(Yr = cut(Year, breaks = c(1959, 1972, 2005, 2016), labels = c("1960-1972", "1973-2005", "2006-2016")))
-summary(swallows.df.3)     # make sure data look ok
-str(swallows.df.3)         # have 1 outlier
-View(swallows.df.3)        
+swallows.df <- swallows.df %>% mutate(Yr = cut(Year, breaks = c(1959, 1972, 2005, 2016), labels = c("1960-1972", "1973-2005", "2006-2016")))
+summary(swallows.df)     # make sure data look ok
+str(swallows.df)         # have 1 outlier
+View(swallows.df)        
 
 # change SD12 variable (# of chicks that survived to day 12, count data) to the % of the clutch that survived, to get survival rate
-swallows.df.4 <- swallows.df.3 %>% mutate(Surv.Rate = SD12 / CS)
-summary(swallows.df.4)     # make sure data look ok
-View(swallows.df.4)
+swallows.df <- swallows.df %>% mutate(Surv.Rate = SD12 / CS)
+summary(swallows.df)     # make sure data look ok
+View(swallows.df)
 
 # outlier in CID variable (value = 96, or Aug 4) which is biologically unlikely. Probably due to recording error
 # drop outlier:
-swallows.df.5 <- filter(swallows.df.4, CID < 95)
-summary(swallows.df.5)     # make sure data look ok
+swallows.df <- filter(swallows.df, CID < 95)
+summary(swallows.df)     # make sure data look ok
 
 # make a tibble for each species so they can be examined seperately:
-TRES.df <- filter(swallows.df.5, Species == "TRES")  # tree swallows
-BARS.df <- filter(swallows.df.5, Species == "BARS")  # barn swallows
+TRES.df <- filter(swallows.df, Species == "TRES")  # tree swallows
+BARS.df <- filter(swallows.df, Species == "BARS")  # barn swallows
 
 
 ##### STEP 3: VISUALIZE DATA for each biological question
 
 # histogram, see how many records exist for each species, likely unbalanced due to volunteer effort
-ggplot(swallows.df.5, aes(x = Year)) + 
+ggplot(swallows.df, aes(x = Year)) + 
   geom_histogram(bins = 60) + 
   facet_grid(. ~ Species) + 
   xlab("Year") + 
@@ -72,7 +72,7 @@ ggplot(swallows.df.5, aes(x = Year)) +
 #    - look at clutch initiation date (CID) in both species     
 
 # scatterplot, see spread of data
-ggplot(swallows.df.5, aes(Year, CID)) + 
+ggplot(swallows.df, aes(Year, CID)) + 
   geom_point() + 
   geom_jitter() +
   xlab("Year") + 
@@ -80,7 +80,7 @@ ggplot(swallows.df.5, aes(Year, CID)) +
   facet_grid(. ~ Species)
   
 #boxplot, see if mean is changing over time
-ggplot(swallows.df.5, aes(Yr, CID)) + 
+ggplot(swallows.df, aes(Yr, CID)) + 
   stat_boxplot(geom="errorbar") + 
   geom_boxplot(outlier.shape=1) + 
   xlab("Period") + ylab("Clutch initiation date (May 1 = day 1)") + 
@@ -92,12 +92,12 @@ ggplot(swallows.df.5, aes(Yr, CID)) +
         
 #boxplot + scatterplot, see if mean is changing over time
 # boxplot and scatterplot both difficult to interpret by themselves, more informative when combined
-ggplot(swallows.df.5, aes(Yr, Surv.Rate)) +   
+ggplot(swallows.df, aes(Yr, Surv.Rate)) +   
   stat_boxplot(geom="errorbar") + 
   geom_boxplot(outlier.shape=1) + 
   xlab("Period") + ylab("Survival") + 
   facet_grid(. ~ Species)  +
-  geom_jitter() + geom_point(alpha=0.3)
+  geom_point(alpha=0.3)
 
 
 
@@ -113,14 +113,14 @@ ggplot(swallows.df.5, aes(Yr, Surv.Rate)) +
   
 #climate variable #1 - minimum February temperature  
 # looks like minFt has a negative relationship with CID
-ggplot(swallows.df.5, aes(minFt, CID)) + 
+ggplot(swallows.df, aes(minFt, CID)) + 
     geom_point() + 
     geom_jitter() +
     xlab("Minimum February temperature") + 
     ylab("Clutch initiation date (May 1 = day 1)") + 
     facet_grid(. ~ Species)
   
-ggplot(swallows.df.5, aes(minFt, CID)) + 
+ggplot(swallows.df, aes(minFt, CID)) + 
     geom_smooth(mapping = aes(x = minFt, y = CID)) + 
     xlab("Minimum February temperature (C)") + 
     ylab("Clutch initiation date (May 1 = day 1)") + 
@@ -128,14 +128,14 @@ ggplot(swallows.df.5, aes(minFt, CID)) +
   
 #climate variable #2 - minimum January-February temperature 
 # looks like minJFt has a negative relationship with CID in TRES, but not in BARS
-ggplot(swallows.df.5, aes(minJFt, CID)) + 
+ggplot(swallows.df, aes(minJFt, CID)) + 
     geom_point() + 
     geom_jitter() +
     xlab("Minimum Jan-Feb temperature") + 
     ylab("Clutch initiation date (May 1 = day 1)") + 
     facet_grid(. ~ Species)
   
-ggplot(swallows.df.5, aes(minJFt, CID)) + 
+ggplot(swallows.df, aes(minJFt, CID)) + 
     geom_smooth(mapping = aes(x = minJFt, y = CID)) + 
     xlab("Minimum Jan-Feb temperature (C)") + 
     ylab("Clutch initiation date (May 1 = day 1)") + 
@@ -143,14 +143,14 @@ ggplot(swallows.df.5, aes(minJFt, CID)) +
 
 #climate variable #3 - median January-February temperature 
 # no consistent relationship in either spp.
-ggplot(swallows.df.5, aes(medJFt, CID)) + 
+ggplot(swallows.df, aes(medJFt, CID)) + 
   geom_point() + 
   geom_jitter() +
   xlab("Median Jan-Feb temperature") + 
   ylab("Clutch initiation date (May 1 = day 1)") + 
   facet_grid(. ~ Species)
 
-ggplot(swallows.df.5, aes(medJFt, CID)) + 
+ggplot(swallows.df, aes(medJFt, CID)) + 
   geom_smooth(mapping = aes(x = medJFt, y = CID)) + 
   xlab("Median Jan-Feb temperature (C)") + 
   ylab("Clutch initiation date (May 1 = day 1)") + 
@@ -159,14 +159,14 @@ ggplot(swallows.df.5, aes(medJFt, CID)) +
 #climate variable #4 - mean annual precipitation 
 # CID earliest with mean monthly precipitation is lowest and almost highest
 # does this make sense?
-ggplot(swallows.df.5, aes(meanMAp, CID)) + 
+ggplot(swallows.df, aes(meanMAp, CID)) + 
   geom_point() + 
   geom_jitter() +
   xlab("Mean monthly precipitation (cm)") + 
   ylab("Clutch initiation date (May 1 = day 1)") + 
   facet_grid(. ~ Species)
 
-ggplot(swallows.df.5, aes(meanMAp, CID)) + 
+ggplot(swallows.df, aes(meanMAp, CID)) + 
   geom_smooth(mapping = aes(x = meanMAp, y = CID)) + 
   xlab("Mean monthly precipitation (cm)") + 
   ylab("Clutch initiation date (May 1 = day 1)") + 
