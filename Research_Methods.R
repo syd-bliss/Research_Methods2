@@ -106,6 +106,72 @@ ggplot(swallows.df.5, aes(Yr, Surv.Rate)) +
   geom_point(aes(size = count), alpha = 0.3) 
   
   
+  
+#Q3 - breeding phenology & climate
+#    - are there relationships between climate variables and CID?
+#    - need to pull apart BARS clutches
+  
+#climate variable #1 - minimum February temperature  
+# looks like minFt has a negative relationship with CID
+ggplot(swallows.df.5, aes(minFt, CID)) + 
+    geom_point() + 
+    geom_jitter() +
+    xlab("Minimum February temperature") + 
+    ylab("Clutch initiation date (May 1 = day 1)") + 
+    facet_grid(. ~ Species)
+  
+ggplot(swallows.df.5, aes(minFt, CID)) + 
+    geom_smooth(mapping = aes(x = minFt, y = CID)) + 
+    xlab("Minimum February temperature (C)") + 
+    ylab("Clutch initiation date (May 1 = day 1)") + 
+    facet_grid(. ~ Species)
+  
+#climate variable #2 - minimum January-February temperature 
+# looks like minJFt has a negative relationship with CID in TRES, but not in BARS
+ggplot(swallows.df.5, aes(minJFt, CID)) + 
+    geom_point() + 
+    geom_jitter() +
+    xlab("Minimum Jan-Feb temperature") + 
+    ylab("Clutch initiation date (May 1 = day 1)") + 
+    facet_grid(. ~ Species)
+  
+ggplot(swallows.df.5, aes(minJFt, CID)) + 
+    geom_smooth(mapping = aes(x = minJFt, y = CID)) + 
+    xlab("Minimum Jan-Feb temperature (C)") + 
+    ylab("Clutch initiation date (May 1 = day 1)") + 
+    facet_grid(. ~ Species)
+
+#climate variable #3 - median January-February temperature 
+# no consistent relationship in either spp.
+ggplot(swallows.df.5, aes(medJFt, CID)) + 
+  geom_point() + 
+  geom_jitter() +
+  xlab("Median Jan-Feb temperature") + 
+  ylab("Clutch initiation date (May 1 = day 1)") + 
+  facet_grid(. ~ Species)
+
+ggplot(swallows.df.5, aes(medJFt, CID)) + 
+  geom_smooth(mapping = aes(x = medJFt, y = CID)) + 
+  xlab("Median Jan-Feb temperature (C)") + 
+  ylab("Clutch initiation date (May 1 = day 1)") + 
+  facet_grid(. ~ Species)
+
+#climate variable #4 - mean annual precipitation 
+# CID earliest with mean monthly precipitation is lowest and almost highest
+# does this make sense?
+ggplot(swallows.df.5, aes(meanMAp, CID)) + 
+  geom_point() + 
+  geom_jitter() +
+  xlab("Mean monthly precipitation (cm)") + 
+  ylab("Clutch initiation date (May 1 = day 1)") + 
+  facet_grid(. ~ Species)
+
+ggplot(swallows.df.5, aes(meanMAp, CID)) + 
+  geom_smooth(mapping = aes(x = meanMAp, y = CID)) + 
+  xlab("Mean monthly precipitation (cm)") + 
+  ylab("Clutch initiation date (May 1 = day 1)") + 
+  facet_grid(. ~ Species)
+
 
 
 

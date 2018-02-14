@@ -119,6 +119,48 @@ ggplot(swallows.df.5, aes(Yr, Surv.Rate)) +
   geom_jitter()
 ```
 
+**Q3 - Breeding phenology and climate variables. Is there a relationship between clutch initiation date (CID) and various measures on climate?**
+
+Note the BARS clutches are not seperated here, limiting the interpretation for this species.
+
+Climate variable #1 - minimum February temperature (minFt). Looks like minFt has a strong negative relationship with CID:
+
+```{r}
+ggplot(swallows.df.5, aes(minFt, CID)) + 
+    geom_smooth(mapping = aes(x = minFt, y = CID)) + 
+    xlab("Minimum February temperature (C)") + 
+    ylab("Clutch initiation date (May 1 = day 1)") + 
+    facet_grid(. ~ Species)
+```
+
+Climate variable #2 - minimum January-February temperature (minJFt). Looks like minJFt has a negative relationship with CID in TRES, but not in BARS:
+
+```{r}
+  ggplot(swallows.df.5, aes(minJFt, CID)) + 
+    geom_smooth(mapping = aes(x = minJFt, y = CID)) + 
+    xlab("Minimum Jan-Feb temperature (C)") + 
+    ylab("Clutch initiation date (May 1 = day 1)") + 
+    facet_grid(. ~ Species)
+```
+
+Climate variable #3 - median January-February temperature (medJFt). No consistent relationship in either species:
+```{r}
+ggplot(swallows.df.5, aes(medJFt, CID)) + 
+  geom_smooth(mapping = aes(x = medJFt, y = CID)) + 
+  xlab("Median Jan-Feb temperature (C)") + 
+  ylab("Clutch initiation date (May 1 = day 1)") + 
+  facet_grid(. ~ Species)
+```
+
+Climate variable #4 - mean annual precipitation (meanMAp). Clutch initiation date is  earliest with meanMAp is lowest and almost highest. Does this make sense?
+
+```{r}
+ggplot(swallows.df.5, aes(meanMAp, CID)) + 
+  geom_smooth(mapping = aes(x = meanMAp, y = CID)) + 
+  xlab("Mean monthly precipitation (cm)") + 
+  ylab("Clutch initiation date (May 1 = day 1)") + 
+  facet_grid(. ~ Species)
+```
 
 
 
