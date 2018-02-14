@@ -154,7 +154,7 @@ Climate variable #2 - minimum January-February temperature (minJFt). Looks like 
     facet_grid(. ~ Species)
 ```
 
-Climate variable #3 - median January-February temperature (medJFt). No consistent relationship in either species:
+Climate variable #3 - median January-February temperature (medJFt). No consistent relationship in either species: 
 ```{r}
 ggplot(swallows.df, aes(medJFt, CID)) + 
   geom_smooth(mapping = aes(x = medJFt, y = CID)) + 
