@@ -1,0 +1,85 @@
+---
+title: "BLPW_assignment"
+author: "Sydney_Bliss"
+date: '2018-02-21'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### ASSIGNMENT - BLACKPOLL WARBLER RELATIVE MASS PLOT  
+
+**STEP 1 - import packages, look at data**
+
+```{r results='hide', message=F, warning=F}
+library(tidyverse) 
+library(lubridate)
+rm(list = ls())
+```
+
+Open the RDS file, then View to see the data:
+```{r}
+blpw.all <- readRDS("blpw.all.RDS")
+```
+
+Check what variables are in each column:
+```{r}
+table(blpw.all$location) # 2 options: BP (n=1892) and SI (n=566)
+table(blpw.all$age) # 5 options: AHY (n=523), ASY (n=0), HY (n=1802), SY (n=0), and U (n=133)
+table(blpw.all$recap) # 2 options: N (n=2163), R (n=295), U (n=0)
+table(blpw.all$year) # 16 options: 1996-2008, 2010-2012
+table(blpw.all$month) # 3 options: Aug, Sep, Oct 
+```
+
+**STEP 2 - manipulate data**  
+
+Find band numbers with multiple records (i.e. recaps) and isolate them:
+```{r}
+blpw.all <- blpw.all %>%
+            group_by(band) %>% 
+            filter(n() > 1) 
+
+blpw.all # manipulation looks ok
+```
+
+Set dates to same year so time stamp reads them properly, and recode dates as a single variable:
+```{r}
+blpw.all <- blpw.all %>%
+            mutate(year, year = 2000) %>% 
+            mutate(date = make_date(year, month, day))
+
+blpw.all # manipulation looks ok
+```
+
+See how many bands are recaps, and # of recaps for each band (not necessary for analysis, but useful):
+```{r}
+blpw.recap.sums <- blpw.all %>%
+                   group_by(band, location) %>%
+                   summarize(n())
+
+blpw.recap.sums # manipulation looks ok
+```
+
+**STEP 3 - get within-band mass differences**
+```{r}
+blpw.all <- blpw.all %>% 
+            group_by(band) %>% 
+            mutate(rel.mass = mass - first(mass))
+
+blpw.all # manipulation looks ok
+```
+
+**STEP 4 - plot data**
+
+Can't get colour to work, so leave as black and white:
+```{r}
+ggplot(blpw.all, aes(x = date, y = rel.mass, group = band)) +
+  geom_line()  + geom_point() +
+  xlab("Time of Year") + ylab("Mass (in grams, relative to capture date)")  +
+  facet_grid(. ~ location) 
+```
+
+
+
