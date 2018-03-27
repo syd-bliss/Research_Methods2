@@ -17,8 +17,7 @@
 
 # Q4 - Is breeding performance (chick survival) affected by climate?
 # Hypothesis: chick survival has been negatively affected by changes in climate
-# Rationale: ???
-
+# Rationale: if swallow breeding performance has declined over time, the most obvious explanation is a decrease in insect populations driven by climate change  
 
 
 
@@ -34,18 +33,18 @@ problems(swallows.df)
 ##### STEP 2: TIDY DATA
 
 # drop unnecessary columns to simplify data frame: 
-swallows.df <- select(swallows.df, Species, NestID, Province, Site, Latitude, Longitude, Year, CID, HD, CS, BS, SD12, minFt, minJFt, medJFt, medJp, meanMAp)
+swallows.df <- select(swallows.df, Species, NestID, Clutch.Num, Province, Site, Latitude, Longitude, Year, CID, HD, CS, BS, SD12, minFt, minJFt, medJFt, medJp, meanMAp)
 
 # create 3 time bins: 1) 1960-1972, 2) 1973-2005, 3) 2006-2016 
 swallows.df <- swallows.df %>% mutate(Yr = cut(Year, breaks = c(1959, 1972, 2005, 2016), labels = c("1960-1972", "1973-2005", "2006-2016")))
 summary(swallows.df)     # make sure data look ok
 str(swallows.df)         # have 1 outlier
-View(swallows.df)        
+      
 
 # change SD12 variable (# of chicks that survived to day 12, count data) to the % of the clutch that survived, to get survival rate
 swallows.df <- swallows.df %>% mutate(Surv.Rate = SD12 / CS)
 summary(swallows.df)     # make sure data look ok
-View(swallows.df)
+
 
 # outlier in CID variable (value = 96, or Aug 4) which is biologically unlikely. Probably due to recording error
 # drop outlier:
@@ -86,6 +85,19 @@ ggplot(swallows.df, aes(Yr, CID)) +
   xlab("Period") + ylab("Clutch initiation date (May 1 = day 1)") + 
   facet_grid(. ~ Species)     
 
+#try violinplot for BARS (dbl-brooded):  
+BARS.df <- filter(BARS.df, Clutch.Num == "1" | Clutch.Num == "2")  # swallows with values for Clutch.Num
+BARS.df$Clutch.Num <- as.factor(BARS.df$Clutch.Num)
+BARS.df$Year <- as.factor(BARS.df$Year)
+
+ggplot(BARS.df, aes(Year, CID)) + 
+  geom_violin() + 
+  stat_summary(fun.y=median, geom="point", size=3) +
+  geom_boxplot(width=0.1) +
+  xlab("Year") + 
+  ylab("Clutch initiation date (May 1 = day 1)")
+
+
 
 # Q2 - changes breeding performance 
 #    - look at % of clutch that survived (Surv.Rate) in both species        
@@ -101,7 +113,6 @@ ggplot(swallows.df, aes(Yr, Surv.Rate)) +
 
 
 
-
 ### use summarise() and group_by() to get counts of Surv.Rate, add to last to plot ?
   geom_point(aes(size = count), alpha = 0.3) 
   
@@ -111,7 +122,7 @@ ggplot(swallows.df, aes(Yr, Surv.Rate)) +
 #    - are there relationships between climate variables and CID?
 #    - need to pull apart BARS clutches
   
-#climate variable #1 - minimum February temperature  
+#Climate Variable #1 - minimum February temperature  
 # looks like minFt has a negative relationship with CID
 ggplot(swallows.df, aes(minFt, CID)) + 
     geom_point() + 
@@ -125,8 +136,15 @@ ggplot(swallows.df, aes(minFt, CID)) +
     xlab("Minimum February temperature (C)") + 
     ylab("Clutch initiation date (May 1 = day 1)") + 
     facet_grid(. ~ Species)
-  
-#climate variable #2 - minimum January-February temperature 
+
+ggplot(BARS.df, aes(minFt, CID)) + 
+  geom_smooth(mapping = aes(x = minFt, y = CID, linetype = Clutch.Num)) + 
+  xlab("Minimum February temperature (C)") + 
+  ylab("Clutch initiation date (May 1 = day 1)")  
+
+
+
+#Climate Variable #2 - minimum January-February temperature 
 # looks like minJFt has a negative relationship with CID in TRES, but not in BARS
 ggplot(swallows.df, aes(minJFt, CID)) + 
     geom_point() + 
@@ -136,12 +154,18 @@ ggplot(swallows.df, aes(minJFt, CID)) +
     facet_grid(. ~ Species)
   
 ggplot(swallows.df, aes(minJFt, CID)) + 
-    geom_smooth(mapping = aes(x = minJFt, y = CID)) + 
+    geom_smooth(span = 0.8, mapping = aes(x = minJFt, y = CID)) + 
     xlab("Minimum Jan-Feb temperature (C)") + 
     ylab("Clutch initiation date (May 1 = day 1)") + 
     facet_grid(. ~ Species)
 
-#climate variable #3 - median January-February temperature 
+ggplot(BARS.df, aes(minJFt, CID)) + 
+  geom_smooth(mapping = aes(x = minJFt, y = CID, linetype = Clutch.Num)) + 
+  xlab("Minimum Jan-Feb temperature (C)") + 
+  ylab("Clutch initiation date (May 1 = day 1)") 
+
+
+#Climate Variable #3 - median January-February temperature 
 # no consistent relationship in either spp.
 ggplot(swallows.df, aes(medJFt, CID)) + 
   geom_point() + 
@@ -156,7 +180,14 @@ ggplot(swallows.df, aes(medJFt, CID)) +
   ylab("Clutch initiation date (May 1 = day 1)") + 
   facet_grid(. ~ Species)
 
-#climate variable #4 - mean annual precipitation 
+
+ggplot(BARS.df, aes(medJFt, CID)) + 
+  geom_smooth(mapping = aes(x = medJFt, y = CID, linetype = Clutch.Num)) + 
+  xlab("Median Jan-Feb temperature (C)") + 
+  ylab("Clutch initiation date (May 1 = day 1)") 
+
+
+#Climate Variable #4 - mean annual precipitation 
 # CID earliest with mean monthly precipitation is lowest and almost highest
 # does this make sense?
 ggplot(swallows.df, aes(meanMAp, CID)) + 
@@ -171,4 +202,9 @@ ggplot(swallows.df, aes(meanMAp, CID)) +
   xlab("Mean monthly precipitation (cm)") + 
   ylab("Clutch initiation date (May 1 = day 1)") + 
   facet_grid(. ~ Species)
+
+ggplot(BARS.df, aes(meanMAp, CID)) + 
+  geom_smooth(mapping = aes(x = meanMAp, y = CID, linetype = Clutch.Num)) + 
+  xlab("Mean monthly precipitation (cm)") + 
+  ylab("Clutch initiation date (May 1 = day 1)") 
 

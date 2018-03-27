@@ -101,6 +101,25 @@ ggplot(swallows.df, aes(Yr, CID)) +
   facet_grid(. ~ Species) 
 ```
 
+
+Given that Barn Swallows are double-brooded and data are bimodal, it's easier to examine clutch initiation date if data are visualized differently. 
+
+As nest-checks were largely opportunistic due to reliance on volunteer effort, it is unclear if for most records if it a first or second clutch, and unkown if nest-searching occured late enough in the season to detect second clutches. Therefore, only data from the three most recent years will be used. In these years, a monitoring prgram existed for the entire nesting period, and it is known if a clutch was the first or second for each record. 
+
+Tidy Barn Swallow data, then try a violin plot:
+```{r}
+BARS.df <- filter(BARS.df, Clutch.Num == "1" | Clutch.Num == "2")  
+BARS.df$Clutch.Num <- as.factor(BARS.df$Clutch.Num)
+BARS.df$Year <- as.factor(BARS.df$Year)
+
+ggplot(BARS.df, aes(Year, CID)) + 
+  geom_violin() + 
+  stat_summary(fun.y=median, geom="point", size=3) +
+  geom_boxplot(width=0.1) +
+  xlab("Year") + 
+  ylab("Clutch initiation date (May 1 = day 1)")
+```
+
 **Q2** - changes breeding performance 
 Look at % of clutch that survived (Surv.Rate) in both species. Use boxplot and scatterplot as both are difficult to interpret by themselves:
 ```{r message=F, warning=F}
@@ -124,6 +143,16 @@ ggplot(swallows.df, aes(minFt, CID)) +
     facet_grid(. ~ Species)
 ```
 
+If seperate Barn Swallow clutches, now looks like no change over time:
+
+```{r}
+ggplot(BARS.df, aes(minFt, CID)) + 
+  geom_smooth(mapping = aes(x = minFt, y = CID, linetype = Clutch.Num)) + 
+  xlab("Minimum February temperature (C)") + 
+  ylab("Clutch initiation date (May 1 = day 1)") 
+```
+
+
 Climate Variable #2 - minimum January-February temperature (minJFt). Looks like minJFt has a negative relationship with CID in TRES, but not in BARS
 ```{r}
 ggplot(swallows.df, aes(minJFt, CID)) + 
@@ -132,6 +161,16 @@ ggplot(swallows.df, aes(minJFt, CID)) +
     ylab("Clutch initiation date (May 1 = day 1)") + 
     facet_grid(. ~ Species)
 ```
+
+If seperate Barn Swallow clutches, looks like the first clutch could initiate later in warmer years (counterintuitive), but it's not a strong relationship. 
+
+```{r}
+ggplot(BARS.df, aes(minJFt, CID)) + 
+  geom_smooth(mapping = aes(x = minJFt, y = CID, linetype = Clutch.Num)) + 
+  xlab("Minimum Jan-Feb temperature (C)") + 
+  ylab("Clutch initiation date (May 1 = day 1)") 
+```
+
 
 Climate Variable #3 - median January-February temperature (medJFt). Does not appear to be a consistent relationship in either species. 
 ```{r}
@@ -142,6 +181,16 @@ ggplot(swallows.df, aes(medJFt, CID)) +
   facet_grid(. ~ Species)
 ```
 
+If seperate Barn Swallow clutches, still does not appear to be a consistent relationship.
+
+```{r}
+ggplot(BARS.df, aes(medJFt, CID)) + 
+  geom_smooth(mapping = aes(x = medJFt, y = CID, linetype = Clutch.Num)) + 
+  xlab("Median Jan-Feb temperature (C)") + 
+  ylab("Clutch initiation date (May 1 = day 1)") 
+```
+
+
 Climate Variable #4 - mean annual precipitation (mean MAp). CID is earliest when meanMAp is lowest and almost highest. Does this make sense?
 ```{r}
 ggplot(swallows.df, aes(meanMAp, CID)) + 
@@ -151,6 +200,14 @@ ggplot(swallows.df, aes(meanMAp, CID)) +
   facet_grid(. ~ Species)
 ```
 
+If seperate Barn Swallow clutches, now looks like mean MAp has no relationship on clutch initiation on this spp.
+
+```{r}
+ggplot(BARS.df, aes(meanMAp, CID)) + 
+  geom_smooth(mapping = aes(x = meanMAp, y = CID, linetype = Clutch.Num)) + 
+  xlab("Mean monthly precipitation (cm)") + 
+  ylab("Clutch initiation date (May 1 = day 1)")
+```
 
 
   
