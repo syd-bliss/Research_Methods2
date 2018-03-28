@@ -86,8 +86,10 @@ ggplot(swallows.df, aes(Yr, CID)) +
   facet_grid(. ~ Species)     
 
 #try violinplot for BARS (dbl-brooded):  
-BARS.df <- filter(BARS.df, Clutch.Num == "1" | Clutch.Num == "2")  # swallows with values for Clutch.Num
 BARS.df$Clutch.Num <- as.factor(BARS.df$Clutch.Num)
+
+BARS.df <- filter(BARS.df, Clutch.Num == "1" | Clutch.Num == "2")  # swallows with values for Clutch.Num
+
 BARS.df$Year <- as.factor(BARS.df$Year)
 
 ggplot(BARS.df, aes(Year, CID)) + 
@@ -207,4 +209,5 @@ ggplot(BARS.df, aes(meanMAp, CID)) +
   geom_smooth(mapping = aes(x = meanMAp, y = CID, linetype = Clutch.Num)) + 
   xlab("Mean monthly precipitation (cm)") + 
   ylab("Clutch initiation date (May 1 = day 1)") 
+
 

@@ -41,13 +41,14 @@ library(tidyverse)
 rm(list = ls()) #clear environment
 swallows.df <- read_csv("swallows.csv") # import dataset and save to an object
 problems(swallows.df) #ensure tibble is of the correct dimensions
+
 ```
 
 **STEP 2: TIDY THE DATA**
 
 Drop unnecessary columns to simplify the data frame: 
 ```{r}
-swallows.df <- select(swallows.df, Species, NestID, Province, Site, Latitude, Longitude, Year, CID, HD, CS, BS, SD12, minFt, minJFt, medJFt, medJp, meanMAp)
+swallows.df <- select(swallows.df, Species, NestID, Province, Clutch.Num, Site, Latitude, Longitude, Year, CID, HD, CS, BS, SD12, minFt, minJFt, medJFt, medJp, meanMAp)
 ```
 Create 3 time bins: 1) 1960-1972, 2) 1973-2005, 3) 2006-2016 so changes during, in the initial years of, and in the later years of, swallow declines can be examined seperately:
 ```{r}
@@ -69,6 +70,7 @@ Make a tibble for each species so they can be examined seperately:
 ```{r}
 TRES.df <- filter(swallows.df, Species == "TRES")  # tree swallows
 BARS.df <- filter(swallows.df, Species == "BARS")  # barn swallows
+
 ```
 **STEP 3: VISUALIZE DATA for each biological question**
 
@@ -108,10 +110,12 @@ As nest-checks were largely opportunistic due to reliance on volunteer effort, i
 
 Tidy Barn Swallow data, then try a violin plot:
 ```{r}
-BARS.df <- filter(BARS.df, Clutch.Num == "1" | Clutch.Num == "2")  
-BARS.df$Clutch.Num <- as.factor(BARS.df$Clutch.Num)
 BARS.df$Year <- as.factor(BARS.df$Year)
 
+BARS.df$Clutch.Num <- as.factor(BARS.df$Clutch.Num)
+
+BARS.df <- filter(BARS.df, Clutch.Num == "1" | Clutch.Num == "2") 
+ 
 ggplot(BARS.df, aes(Year, CID)) + 
   geom_violin() + 
   stat_summary(fun.y=median, geom="point", size=3) +
@@ -154,7 +158,7 @@ ggplot(BARS.df, aes(minFt, CID)) +
 
 
 Climate Variable #2 - minimum January-February temperature (minJFt). Looks like minJFt has a negative relationship with CID in TRES, but not in BARS
-```{r}
+```{r warning=F}
 ggplot(swallows.df, aes(minJFt, CID)) + 
     geom_smooth(mapping = aes(x = minJFt, y = CID)) + 
     xlab("Minimum Jan-Feb temperature (C)") + 
@@ -164,7 +168,7 @@ ggplot(swallows.df, aes(minJFt, CID)) +
 
 If seperate Barn Swallow clutches, looks like the first clutch could initiate later in warmer years (counterintuitive), but it's not a strong relationship. 
 
-```{r}
+```{r }
 ggplot(BARS.df, aes(minJFt, CID)) + 
   geom_smooth(mapping = aes(x = minJFt, y = CID, linetype = Clutch.Num)) + 
   xlab("Minimum Jan-Feb temperature (C)") + 
@@ -173,7 +177,7 @@ ggplot(BARS.df, aes(minJFt, CID)) +
 
 
 Climate Variable #3 - median January-February temperature (medJFt). Does not appear to be a consistent relationship in either species. 
-```{r}
+```{r warning=F}
 ggplot(swallows.df, aes(medJFt, CID)) + 
   geom_smooth(mapping = aes(x = medJFt, y = CID)) + 
   xlab("Median Jan-Feb temperature (C)") + 
@@ -192,7 +196,7 @@ ggplot(BARS.df, aes(medJFt, CID)) +
 
 
 Climate Variable #4 - mean annual precipitation (mean MAp). CID is earliest when meanMAp is lowest and almost highest. Does this make sense?
-```{r}
+```{r warning=F}
 ggplot(swallows.df, aes(meanMAp, CID)) + 
   geom_smooth(mapping = aes(x = meanMAp, y = CID)) + 
   xlab("Mean monthly precipitation (cm)") + 
@@ -202,20 +206,11 @@ ggplot(swallows.df, aes(meanMAp, CID)) +
 
 If seperate Barn Swallow clutches, now looks like mean MAp has no relationship on clutch initiation on this spp.
 
-```{r}
+```{r warning=F}
 ggplot(BARS.df, aes(meanMAp, CID)) + 
   geom_smooth(mapping = aes(x = meanMAp, y = CID, linetype = Clutch.Num)) + 
   xlab("Mean monthly precipitation (cm)") + 
   ylab("Clutch initiation date (May 1 = day 1)")
 ```
-
-
-  
-
-
- 
-
-
-
 
 
